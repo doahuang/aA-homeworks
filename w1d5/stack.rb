@@ -4,15 +4,22 @@ class Stack
   end
 
   def add(el)
-    @stack << el
+    stack << el
     el
   end
 
   def remove
-    @stack.pop
+    stack.pop
   end
 
   def show
-    @stack
+    stack.dup
   end
+
+  def inspect
+    "#{stack}"
+  end
+
+  private
+  attr_reader :stack
 end
