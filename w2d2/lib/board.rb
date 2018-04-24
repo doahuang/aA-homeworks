@@ -10,51 +10,59 @@ class Board
 
   def place_stones
     # helper method to #initialize every non-store cup with four stones each]
-    four_stones = [:stone] * 4
     cups.each_with_index do |cup, idx|
-      four_stones.each{ |stone| cup << stone } unless idx == 6 || idx == 13
+      4.times{ cup << :stone } unless idx == 6 || idx == 13
     end
   end
 
   def valid_move?(start_pos)
-    raise "Invalid starting cup" unless start_pos.between?(1, 12)
+    if !start_pos.between?(0, 12) || cups[start_pos].empty?
+      raise "Invalid starting cup"
+    end
   end
 
   def make_move(start_pos, current_player_name)
-    stones = cups[start_pos].size
+    stones = cups[start_pos]
     cups[start_pos] = []
-    cups_idx = (start_pos + 1..start_pos + stones).to_a
-    if current_player_name == @name1
-      cups_idx.map!{ |i| i < 13 ? i : i - 13 }
-    else
-      cups_idx.map!{ |i| i > 13 ? i - 14 : i }
+    curr_pos = start_pos
+    until stones.empty?
+      curr_pos += 1
+      curr_pos = 0 if curr_pos > 13
+      if current_player_name == @name1
+        cups[curr_pos] << stones.pop unless curr_pos == 13
+      else
+        cups[curr_pos] << stones.pop unless curr_pos == 6
+      end
     end
-    cups_idx.each{ |i| cups[i] << :stone }
     render
-    next_turn(cups_idx.last)
+    next_turn(curr_pos)
   end
 
   def next_turn(ending_cup_idx)
     # helper method to determine what #make_move returns
-    last_cup = cups[ending_cup_idx]
     return :prompt if ending_cup_idx == 6 || ending_cup_idx == 13
-    last_cup.size == 1 ? :switch : ending_cup_idx
+    if cups[ending_cup_idx].size == 1
+      :switch
+    else
+      ending_cup_idx
+    end
   end
 
   def render
-    # print "      #{@cups[7..12].reverse.map { |cup| cup.count }}      \n"
-    # puts "#{@cups[13].count} -------------------------- #{@cups[6].count}"
-    # print "      #{@cups.take(6).map { |cup| cup.count }}      \n"
-    # puts ""
-    # puts ""
+    print "      #{@cups[7..12].reverse.map { |cup| cup.count }}      \n"
+    puts "#{@cups[13].count} -------------------------- #{@cups[6].count}"
+    print "      #{@cups.take(6).map { |cup| cup.count }}      \n"
+    puts ""
+    puts ""
   end
 
   def one_side_empty?
-    (0..5).all?{ |i| cups[i].empty? } || (7..12).all?{ |i| cups[i].empty? }
+    count = cups.map(&:size)
+    count[0...6].sum == 0 || count[7...13].sum == 0
   end
 
   def winner
-    case cups[6] <=> cups[13]
+    case cups[6].size <=> cups[13].size
     when 0
       :draw
     when 1
