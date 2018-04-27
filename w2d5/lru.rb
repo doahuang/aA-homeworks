@@ -8,9 +8,10 @@ class LRUCache
     cache.count
   end
 
+  # O(1)
   def add(el)
     cache.delete(lru) if count == cache_size
-    cache.delete(el) if cache.key?(el)
+    cache.delete(el)
     cache[el] = true
     el
   end
