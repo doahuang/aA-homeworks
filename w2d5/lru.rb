@@ -9,14 +9,14 @@ class LRUCache
   end
 
   def add(el)
-    reset_recent
-    delete_oldest if count == cache_size
-    cache[el] = [1, 1]
+    cache.delete(lru) if count == cache_size
+    cache.delete(el) if cache.key?(el)
+    cache[el] = true
     el
   end
 
   def show
-    sort.map{ |key, _| key }
+    cache.keys
   end
 
   def inspect
@@ -26,16 +26,8 @@ class LRUCache
   private
   attr_reader :cache_size, :cache
 
-  def delete_oldest
-    cache.delete(show.first)
-  end
-
-  def sort
-    cache.sort_by{ |_, (freq, recent)| freq + recent }
-  end
-
-  def reset_recent
-    cache.each{ |key, (_, recent)| cache[key]= [_, 0] }
+  def lru
+    cache.keys.first
   end
 end
 
