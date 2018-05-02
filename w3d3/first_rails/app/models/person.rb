@@ -1,6 +1,5 @@
 class Person < ActiveRecord::Base
-  validates :name, presence: true
-  validates :house_id, presence: true
+  validates :name, :house_id, presence: true
 
   belongs_to :house,
     primary_key: :id,
