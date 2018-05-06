@@ -14,7 +14,8 @@ class BooksController < ApplicationController
     if book.save
       redirect_to books_url
     else
-      render json: book.errors.full_messages
+      flash.now[:errors] = book.errors.full_messages
+      render :new
     end
   end
 
