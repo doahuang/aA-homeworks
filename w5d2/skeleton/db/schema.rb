@@ -34,8 +34,6 @@ ActiveRecord::Schema.define(version: 20180515043234) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name", "toyable_id", "toyable_type"], name: "index_toys_on_name_and_toyable_id_and_toyable_type", unique: true
-    t.index ["name"], name: "index_toys_on_name", unique: true
-    t.index ["toyable_id"], name: "index_toys_on_toyable_id"
   end
 
 end
