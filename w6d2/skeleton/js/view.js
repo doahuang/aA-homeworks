@@ -39,7 +39,7 @@ View.prototype.exercise3 = function () {
   //Result: An <h1> with the text 'i love jquery' appears under the grid.
 
   //your code here!
-  const love = $('<h1></h1>').text('i love jquery');
+  const love = $('<h1>').text('i love jquery');
   $('#easel').append(love);
 };
 
@@ -77,7 +77,7 @@ View.prototype.exercise6 = function () {
   //your code here!
   $('.square').each((_, obj) => {
     let sq = $(obj);
-    sq.css('background', window._randomColorString());
+    sq.css('background-color', _randomColorString());
   });
 };
 
