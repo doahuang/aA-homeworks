@@ -24,9 +24,9 @@ class DynamicArray
   # O(1)
   def pop
     raise 'index out of bounds' if length == 0
+    out = self[length - 1]
+    self[length - 1] = nil 
     @length -= 1
-    out = store[length]
-    @store[length] = nil 
     out
   end
 
@@ -34,25 +34,26 @@ class DynamicArray
   # resize.
   def push(val)
     resize! if length == capacity
-    @store[length] = val
     @length += 1
+    self[length - 1] = val
   end
 
   # O(n): has to shift over all the elements.
   def shift
     raise 'index out of bounds' if length == 0
-    out = store[0]
-    @length -= 1  
-    length.times{ |i| @store[i] = store[i + 1] }
+    out = self[0]
+    self[0] = nil 
+    (1...length).each{ |i| self[i - 1] = self[i] }
+    @length -= 1
     out
   end
 
   # O(n): has to shift over all the elements.
   def unshift(val)
     resize! if length == capacity
-    length.downto(1){ |i| @store[i] = store[i - 1] }
     @length += 1
-    @store[0] = val
+    (length - 1).downto(1){ |i| self[i] = self[i - 1] }
+    self[0] = val
   end
 
   protected
@@ -65,9 +66,9 @@ class DynamicArray
 
   # O(n): has to copy over all the elements to the new store.
   def resize!
-    new_store = StaticArray.new(capacity)
-    length.times{ |i| new_store[i] = store[i] }
     @capacity *= 2
+    new_store = StaticArray.new(capacity)
+    length.times{ |i| new_store[i] = self[i] }
     @store = new_store
   end
 end

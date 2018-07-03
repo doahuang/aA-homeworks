@@ -13,27 +13,28 @@ class QueueWithMax
 
   def initialize
     @store = RingBuffer.new
-    @max = 0
+    @max = []
   end
 
   def enqueue(val)
-    @max = val if max < val
     store.push(val)
+    enqueue_max(val)
+  end
+
+  def enqueue_max(val)
+    while @max[0] && @max[@max.length - 1] < val 
+      @max.pop
+    end
+    @max.push(val)
   end
 
   def dequeue
     val = store.shift
-    if val == max
-      temp = 0
-      store.length.times do |i|
-        temp = store[i] if temp < val
-      end
-      @max = temp
-    end
+    @max.shift if @max[0] == val
   end
 
   def max
-    @max
+    @max[0]
   end
 
   def length
