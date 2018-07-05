@@ -2,18 +2,15 @@ require_relative 'heap'
 
 def k_largest_elements(array, k)
   heap = BinaryMinHeap.new
-  arr = []
 
-  (0...k).each do |i|
-    heap.push(array[i])
+  k.times do
+    heap.push(array.pop)
   end
-  (k...array.length).each do |i|
-    heap.push(array[i])
+
+  until array.empty?
+    heap.push(array.pop)
     heap.extract
   end
-  k.times do |i|
-    arr.push(heap.extract)
-  end
-
-  arr
+  
+  heap.store
 end
