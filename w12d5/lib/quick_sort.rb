@@ -5,9 +5,15 @@ class QuickSort
   # Not in-place. Uses O(n) memory.
   def self.sort1(array)
     return array if array.length < 2
-    pivot = array[0]
-    left = array.select{ |el| el < pivot }
-    right = array.select{ |el| el > pivot }
+    pivot_idx = rand(array.length)
+    pivot = array[pivot_idx]
+    left, right = [], []
+
+    array.each_with_index do |el, i|
+      next if i == pivot_idx
+      el < pivot ? left << el : right << el
+    end
+
     sort1(left) + [pivot] + sort1(right)
   end
 
@@ -32,9 +38,8 @@ class QuickSort
 
     (start + 1...start + length).each do |i|
       if prc.call(array[i], pivot) == -1
-        j = pivot_idx + 1
-        array[j], array[i] = array[i], array[j]
         pivot_idx += 1 
+        array[pivot_idx], array[i] = array[i], array[pivot_idx]
       end
     end
 
