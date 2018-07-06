@@ -18,7 +18,7 @@ class QuickSort
 
     left = pivot_idx - start
     right = length - (left + 1)
-    sort2!(array, 0, left, &prc)
+    sort2!(array, start, left, &prc)
     sort2!(array, pivot_idx + 1, right, &prc)
 
     array
