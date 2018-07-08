@@ -13,20 +13,28 @@ class BinarySearchTree
   end
 
   def find(value, tree_node = @root)
-    self.class.find(value, tree_node)
+    return nil unless tree_node
+    return tree_node if value == tree_node.value
+    tree_node = value < tree_node.value ? tree_node.left : tree_node.right
+    find(value, tree_node)
   end
 
   def delete(value)
-    self.class.delete(value, root)
+    
   end
 
   # helper method for #delete:
   def maximum(tree_node = @root)
-    self.class.maximum(tree_node)
+    return nil unless tree_node
+    return tree_node unless tree_node.right
+    maximum(tree_node.right)
   end
 
   def depth(tree_node = @root)
-    self.class.depth(tree_node)
+    return -1 unless tree_node
+    left = 1 + depth(tree_node.left)
+    right = 1 + depth(tree_node.right)
+    left > right ? left : right
   end 
 
   def is_balanced?(tree_node = @root)
@@ -34,9 +42,11 @@ class BinarySearchTree
   end
 
   def in_order_traversal(tree_node = @root, arr = [])
-    
+    return [] unless tree_node
+    arr += in_order_traversal(tree_node.left)
+    arr << tree_node.value
+    arr += in_order_traversal(tree_node.right)
   end
-
 
   private
   # optional helper methods go here:
@@ -44,34 +54,11 @@ class BinarySearchTree
     return BSTNode.new(value) unless node
     if value <= node.value
       node.left = insert(value, node.left)
+      node.left.parent = node
     else
       node.right = insert(value, node.right)
+      node.right.parent = node
     end
     node
-  end
-
-  def self.find(value, tree_node)
-    return nil unless tree_node
-    return tree_node if value == tree_node.value
-    tree_node = value < tree_node.value ? tree_node.left : tree_node.right
-    find(value, tree_node)
-  end
-
-  def self.delete(value, node)
-    return nil unless node 
-    #
-  end
-
-  def self.maximum(node)
-    return nil unless node
-    return maximum(node.right) if node.right
-    node
-  end
-
-  def self.depth(node)
-    return -1 unless node
-    left = 1 + depth(node.left)
-    right = 1 + depth(node.right)
-    left > right ? left : right
   end
 end
