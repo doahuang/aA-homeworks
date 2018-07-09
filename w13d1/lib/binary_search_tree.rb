@@ -9,11 +9,7 @@ class BinarySearchTree
   end
 
   def insert(value)
-    if root
-      rec_insert(value)
-    else
-      @root = BSTNode.new(value)
-    end
+    root ? rec_insert(value) : @root = BSTNode.new(value)
   end
 
   def find(value, tree_node = @root)
@@ -31,8 +27,8 @@ class BinarySearchTree
       return node.right unless node.left
       new_node = maximum(node.left)
       new_node.parent.right = new_node.left
-      new_node.left = node.left
-      new_node.right = node.right
+      new_node.left.parent = new_node.parent
+      replace(new_node, node)
       return new_node
     end
     if value < node.value
@@ -80,5 +76,13 @@ class BinarySearchTree
       node.right.parent = node
     end
     node
+  end
+
+  def replace(new_node, node)
+    new_node.parent = node.parent
+    new_node.left = node.left
+    new_node.right = node.right
+    new_node.left.parent = new_node
+    new_node.right.parent = new_node
   end
 end
