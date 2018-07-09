@@ -4,12 +4,13 @@ require 'bst_node'
 
 class BinarySearchTree
   attr_reader :root
+
   def initialize
     @root = nil
   end
 
   def insert(value)
-    root ? rec_insert(value) : @root = BSTNode.new(value)
+    @root = insert_to_tree(value, root)
   end
 
   def find(value, tree_node = @root)
@@ -54,7 +55,10 @@ class BinarySearchTree
   end 
 
   def is_balanced?(tree_node = @root)
-    depth(tree_node.left) == depth(tree_node.right)
+    return true unless tree_node
+    left = depth(tree_node.left)
+    right = depth(tree_node.right)
+    (left - right).abs < 2 && is_balanced?(tree_node.left) && is_balanced?(tree_node.right)
   end
 
   def in_order_traversal(tree_node = @root, arr = [])
@@ -66,13 +70,13 @@ class BinarySearchTree
 
   private
   # optional helper methods go here:
-  def rec_insert(value, node = @root)
+  def insert_to_tree(value, node)
     return BSTNode.new(value) unless node
     if value <= node.value
-      node.left = rec_insert(value, node.left)
+      node.left = insert_to_tree(value, node.left)
       node.left.parent = node
     else
-      node.right = rec_insert(value, node.right)
+      node.right = insert_to_tree(value, node.right)
       node.right.parent = node
     end
     node
