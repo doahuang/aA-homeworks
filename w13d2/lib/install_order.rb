@@ -12,7 +12,7 @@ require 'topological_sort'
 
 def install_order(arr)
   vertices = {}
-  (1..9).each do |i|
+  (1..arr.flatten.max).each do |i|
     vertices[i] = Vertex.new(i)
   end
 
