@@ -9,7 +9,7 @@ def topological_sort(vertices)
   vertices.each do |vertex|
     queue << vertex if vertex.in_edges.empty?
   end
-
+  
   until queue.empty?
     current = queue.pop
     sorted << current
