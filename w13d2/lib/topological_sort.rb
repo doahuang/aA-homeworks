@@ -22,3 +22,27 @@ def topological_sort(vertices)
   
   sorted.length == vertices.length ? sorted : []
 end
+
+# def topological_sort(vertices)
+#   sorted = []
+#   visited = [] 
+
+#   vertices.each do |vertex|
+#     visit(vertex, visited, sorted)
+#   end
+
+#   sorted
+# end
+
+# def visit(vertex, visited, sorted)
+#   return if visited.include?(vertex)
+#   visited << vertex 
+
+#   vertex.out_edges.each do |edge|
+#     dest = edge.to_vertex
+#     visit(dest, visited, sorted)
+#   end
+
+#   sorted.unshift(vertex)
+# end
+  
