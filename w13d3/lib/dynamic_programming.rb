@@ -21,18 +21,20 @@ class DynamicProgramming
     cache[n]
   end
 
-  def frog_cache_builder(n)
-    return frog_cache if n < 4
-    (4..n).each do |stair|
+  def frog_cache_builder(n, k = 3)
+    cache = { 0 => [[]], 1 => [[1]] }
+    
+    (2..n).each do |stair|
       res = []
-      (1..3).each do |i|
-        frog_cache[stair - i].each do |arr|
-          res << arr + [i]
+      (1..k).each do |jump|
+        next if jump > stair
+        cache[stair - jump].each do |arr|
+          res << arr + [jump]
         end
       end
-      frog_cache[stair] = res
+      cache[stair] = res
     end
-    frog_cache
+    cache
   end
 
   def frog_hops_top_down(n)
@@ -42,16 +44,17 @@ class DynamicProgramming
   def frog_hops_top_down_helper(n)
     return frog_cache[n] if frog_cache[n]
     res = []
-    (1..3).each do |i|
-      frog_hops_top_down_helper(n - i).each do |arr|
-        res << arr + [i]
+    (1..3).each do |jump|
+      frog_hops_top_down_helper(n - jump).each do |arr|
+        res << arr + [jump]
       end
     end
     frog_cache[n] = res
   end
 
   def super_frog_hops(n, k)
-
+    cache = frog_cache_builder(n, k)
+    cache[n]
   end
 
   def knapsack(weights, values, capacity)
