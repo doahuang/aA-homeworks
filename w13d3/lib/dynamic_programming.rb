@@ -27,7 +27,7 @@ class DynamicProgramming
     (2..n).each do |stair|
       res = []
       (1..k).each do |jump|
-        next if jump > stair
+        break if jump > stair
         cache[stair - jump].each do |arr|
           res << arr + [jump]
         end
@@ -59,27 +59,37 @@ class DynamicProgramming
 
   def knapsack(weights, values, capacity)
     return 0 if capacity == 0
-
-    table = knapsack_table(weights, values, capacity)
-    table[-1][-1]
+    knapsack_table(weights, values, capacity).last.last
   end
 
   # Helper method for bottom-up implementation
   def knapsack_table(weights, values, capacity)
-    val = {}
-    weights.each_index do |i|
-      val[weights[i]] = values[i]
-    end
-
     table = []
-    res = []
-    current = weights.first
 
-    (0..capacity).each do |cap|
-      res << (current <= cap ? val[current] : 0)
+    weights.each_index do |i|
+      res = []
+      item = weights[i]
+
+      (0..capacity).each do |cap|
+        last_best = i == 0 ? 0 : table[i - 1][cap]
+
+        if item <= cap
+          if i == 0
+            res << values[0]
+          else
+            next_best = table[i - 1][cap - item]
+            best = [values[i] + next_best, last_best].max
+            res << best
+          end
+        else
+          res << last_best
+        end
+      end
+
+      table << res
     end
 
-    table << res
+    table
   end
 
   def maze_solver(maze, start_pos, end_pos)
