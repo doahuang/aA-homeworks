@@ -1,5 +1,5 @@
 class DynamicProgramming
-  attr_reader :blair_cache, :frog_cache
+  attr_reader :blair_cache, :frog_cache, :maze_cache
 
   def initialize
     @blair_cache = { 1 => 1, 2 => 2 }
@@ -8,6 +8,7 @@ class DynamicProgramming
       2 => [[1, 1], [2]],
       3 => [[1, 1, 1], [1, 2], [2, 1], [3]]
     }
+    @maze_cache = {}
   end
 
   def blair_nums(n)
@@ -58,40 +59,112 @@ class DynamicProgramming
   end
 
   def knapsack(weights, values, capacity)
-    return 0 if capacity == 0
-    knapsack_table(weights, values, capacity).last.last
+    return 0 if weights.empty? || capacity == 0
+    table = knapsack_table(weights, values, capacity)
+    table[capacity].last
+    # table.last.last
   end
 
   # Helper method for bottom-up implementation
   def knapsack_table(weights, values, capacity)
     table = []
 
-    weights.each_index do |i|
-      res = []
-      item = weights[i]
+    (0..capacity).each do |i|
+      table[i] = []
 
-      (0..capacity).each do |cap|
-        last_best = i == 0 ? 0 : table[i - 1][cap]
-
-        if item <= cap
-          if i == 0
-            res << values[0]
-          else
-            next_best = table[i - 1][cap - item]
-            best = [values[i] + next_best, last_best].max
-            res << best
-          end
+      weights.each_index do |j|
+        if i == 0 
+          table[i][j] = 0
+        elsif j == 0
+          table[i][j] = weights[j] > i ? 0 : values[j]
         else
-          res << last_best
+          option1 = table[i][j - 1]
+          option2 = weights[j] > i ? 0 : table[i - weights[j]][j - 1] + values[j]
+          optimum = [option1, option2].max
+          table[i][j] = optimum
         end
       end
-
-      table << res
     end
 
     table
+    # weights.each_index do |i|
+    #   res = []
+    #   item = weights[i]
+
+    #   (0..capacity).each do |cap|
+    #     last_best = i == 0 ? 0 : table[i - 1][cap]
+
+    #     if item <= cap
+    #       if i == 0
+    #         res << values[0]
+    #       else
+    #         next_best = table[i - 1][cap - item]
+    #         best = [values[i] + next_best, last_best].max
+    #         res << best
+    #       end
+    #     else
+    #       res << last_best
+    #     end
+    #   end
+
+    #   table << res
+    # end
+
+    # table
   end
 
   def maze_solver(maze, start_pos, end_pos)
+    build_cache(start_pos)
+    solve_maze(maze, start_pos, end_pos)
+    find_path(end_pos)
+  end
+
+  private
+
+  def solve_maze(maze, start_pos, end_pos)
+    return true if start_pos == end_pos
+
+    get_moves(maze, start_pos).each do |next_pos|
+      unless maze_cache.keys.include?(next_pos)
+        maze_cache[next_pos] = start_pos
+        solve_maze(maze, next_pos, end_pos)
+      end
+    end
+  end
+
+  def build_cache(start_pos)
+    maze_cache[start_pos] = nil
+  end
+
+  def find_path(end_pos)
+    path = []
+    current = end_pos
+
+    until current.nil?
+      path.unshift(current)
+      current = maze_cache[current]
+    end
+
+    path
+  end
+
+  def get_moves(maze, from_pos)
+    directions = [[0, 1], [1, 0], [-1, 0], [0, -1]]
+    x, y = from_pos
+    result = []
+
+    directions.each do |dx, dy|
+      next_pos = [x + dx, y + dy]
+      result << next_pos if is_valid_pos?(maze, next_pos)
+    end
+
+    result
+  end
+
+  def is_valid_pos?(maze, pos)
+    x, y = pos
+    x >= 0 && y >= 0 && 
+      x < maze.length && y < maze.first.length && 
+        maze[x][y] != "X"
   end
 end
